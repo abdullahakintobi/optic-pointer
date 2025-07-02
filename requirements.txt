@@ -1,0 +1,5 @@
+# Python packages required for the project
+
+opencv-python
+mediapipe
+pyautogui
