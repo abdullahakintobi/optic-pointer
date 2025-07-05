@@ -7,6 +7,10 @@ cam = cv2.VideoCapture(0)
 face_mesh = mp.solutions.face_mesh.FaceMesh(refine_landmarks=True)
 screen_w, screen_h = pyautogui.size()
 
+# Increase sensitivity multiplier to allow small face movements to map more broadly
+SENSITIVITY_X = 4.5  # Tune this value
+SENSITIVITY_Y = 4.0  # Tune this value
+
 while True:
     _, frame = cam.read()
     frame = cv2.flip(frame, 1)
@@ -18,16 +22,27 @@ while True:
     if landmark_points:
         landmarks = landmark_points[0].landmark
 
-        for id, landmark in enumerate(landmarks[474:478]):
-            x = int(landmark.x * frame_w)
-            y = int(landmark.y * frame_h)
-            cv2.circle(frame, (x, y), 3, (0, 255, 0))
+        # Using landmark 475 (one of the iris points)
+        eye_landmark = landmarks[475]
+        x = int(eye_landmark.x * frame_w)
+        y = int(eye_landmark.y * frame_h)
+        cv2.circle(frame, (x, y), 3, (0, 255, 0))
 
-            if id == 1:
-                screen_x = screen_w / frame_w * x
-                screen_y = screen_h / frame_h * y
-                pyautogui.moveTo(screen_x, screen_y)
+        # Normalize the coordinates relative to frame center
+        dx = (eye_landmark.x - 0.5) * SENSITIVITY_X
+        dy = (eye_landmark.y - 0.5) * SENSITIVITY_Y
 
+        # Calculate screen position
+        screen_x = screen_w * (0.5 + dx)
+        screen_y = screen_h * (0.5 + dy)
+
+        # Ensure the mouse stays within screen bounds
+        screen_x = max(0, min(screen_x, screen_w - 1))
+        screen_y = max(0, min(screen_y, screen_h - 1))
+
+        pyautogui.moveTo(screen_x, screen_y, duration=0.05)
+
+        # Blink detection for left eye
         left = [landmarks[145], landmarks[159]]
         for landmark in left:
             x = int(landmark.x * frame_w)
