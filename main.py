@@ -35,7 +35,8 @@ while True:
             cv2.circle(frame, (x, y), 3, (0, 255, 255))
 
         if (left[0].y - left[1].y) < 0.004:
-            print("Click")
+            pyautogui.click()
+            pyautogui.sleep(1)
 
     cv2.imshow("Eye controlled mouse", frame)
     cv2.waitKey(1)
