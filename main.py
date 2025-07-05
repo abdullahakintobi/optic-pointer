@@ -17,6 +17,7 @@ while True:
         for landmark in landmarks:
             x = int(landmark.x * frame_w)
             y = int(landmark.y * frame_h)
+            cv2.circle(frame, (x, y), 3, (0, 255, 0))
             print(x, y)
 
     cv2.imshow("Eye controlled mouse", frame)
