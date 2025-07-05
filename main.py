@@ -34,7 +34,8 @@ while True:
             y = int(landmark.y * frame_h)
             cv2.circle(frame, (x, y), 3, (0, 255, 255))
 
-        print(left[0].y - left[1].y)
+        if (left[0].y - left[1].y) < 0.004:
+            print("Click")
 
     cv2.imshow("Eye controlled mouse", frame)
     cv2.waitKey(1)
